@@ -134,21 +134,14 @@ jobs:
         run: ls -l target/*.war || true
 
 
-      - name: Resolve project version
-        id: meta
-        shell: bash
-        run: |
-          VERS=$(mvn -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive org.codehaus.mojo:exec-maven-plugin:3.5.1:exec)
-          echo "version=$VERS" >> $GITHUB_OUTPUT
-          echo "Resolved version: $VERS"
-
-
       - name: Upload WAR artifact
         uses: actions/upload-artifact@v4
         with:
-          name: hello-war-${{ steps.meta.outputs.version }}
+          name: hello-war                  # constant, easy to download later
           path: target/*.war
           if-no-files-found: error
+          retention-days: 14
+
 
 
       - name: Build & Deploy
