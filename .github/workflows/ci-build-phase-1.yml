@@ -17,8 +17,16 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # full history for SonarQube analysis
+          
+      - name: Check Maven cache before restore
+        run: |
+         echo "Checking ~/.m2 cache status before setup-java restore..."
+         du -sh ~/.m2/repository || echo "No Maven cache found yet."
+         echo "--------------------------------------------"
+         ls -R ~/.m2/repository | head -50 || echo "No repository contents yet."
 
 
+          
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
