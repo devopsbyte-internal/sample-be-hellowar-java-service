@@ -16,8 +16,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      JFROG_USER: ${{ secrets.JFROG_USER_CI }}
-      JFROG_TOKEN: ${{ secrets.JFROG_TOKEN_CI }}
+      JFROG_USER: ${{ secrets.JFROG_USER }}
+      JFROG_TOKEN: ${{ secrets.JFROG_TOKEN }}
 
 
     steps:
