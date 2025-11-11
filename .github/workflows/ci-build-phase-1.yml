@@ -26,7 +26,7 @@ jobs:
           java-version: 17
           # This will be used for across runs in this repo so initially disable to test Artifactory Cache.
           # cache: maven
-          cache: none
+          cache: 'none'
 
 
       - name: Check Maven cache after restore
