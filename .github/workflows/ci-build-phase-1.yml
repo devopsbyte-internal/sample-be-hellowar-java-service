@@ -37,14 +37,65 @@ jobs:
           # cache: maven
 
 
+      - name: Write Maven settings (.m2/settings.xml)
+        run: |
+          mkdir -p $HOME/.m2
+          cat > $HOME/.m2/settings.xml <<'XML'
+          <settings>
+            <servers>
+
+              <!-- Read (downloads) via virtual -->
+              <server>
+                <id>maven-all</id>
+                <username>${env.JFROG_USER}</username>
+                <password>${env.JFROG_TOKEN}</password>
+              </server>
+
+              <server>
+                <id>devopsbyte-maven-releases</id>
+                <username>${env.JFROG_USER}</username>
+                <password>${env.JFROG_TOKEN}</password>
+              </server>
+
+              <server>
+                <id>devopsbyte-maven-snapshots</id>
+                <username>${env.JFROG_USER}</username>
+                <password>${env.JFROG_TOKEN}</password>
+              </server>
+
+            </servers>
+
+            <mirrors>
+              <mirror>
+                <id>maven-all</id>
+                <url>https://devopsbyte.jfrog.io/artifactory/maven-all</url>
+                <mirrorOf>*</mirrorOf>
+              </mirror>
+            </mirrors>
+          </settings>
+          XML
+
+
+
       - name: Check Maven cache after restore
         run: |
           echo "After setup-java restore:"
           du -sh ~/.m2/repository || echo "No Maven cache restored."
+
           echo "--------------------------------------------"
+          echo "~/.m2/repository contents (first 50 lines):"
           ls -R ~/.m2/repository | head -50 || true
 
+          echo "--------------------------------------------"
+          echo "~/.m2/ contents:"
+          ls -l ~/.m2/
+
+          echo "--------------------------------------------"
+          echo "settings.xml contents:"
+          cat ~/.m2/settings.xml || echo "No settings.xml"
           
+
+
       - name: Run unit tests
         run: mvn -B -ntp clean test
 
@@ -92,46 +143,6 @@ jobs:
           name: hello-war-${{ steps.meta.outputs.version }}
           path: target/*.war
           if-no-files-found: error
-
-
-      - name: Write Maven settings (.m2/settings.xml)
-        run: |
-          mkdir -p $HOME/.m2
-          cat > $HOME/.m2/settings.xml <<'XML'
-          <settings>
-            <servers>
-
-              <!-- Read (downloads) via virtual -->
-              <server>
-                <id>maven-all</id>
-                <username>${env.JFROG_USER}</username>
-                <password>${env.JFROG_TOKEN}</password>
-              </server>
-
-              <server>
-                <id>devopsbyte-maven-releases</id>
-                <username>${env.JFROG_USER}</username>
-                <password>${env.JFROG_TOKEN}</password>
-              </server>
-
-              <server>
-                <id>devopsbyte-maven-snapshots</id>
-                <username>${env.JFROG_USER}</username>
-                <password>${env.JFROG_TOKEN}</password>
-              </server>
-
-            </servers>
-
-            <mirrors>
-              <mirror>
-                <id>maven-all</id>
-                <url>https://devopsbyte.jfrog.io/artifactory/maven-all</url>
-                <mirrorOf>*</mirrorOf>
-              </mirror>
-            </mirrors>
-          </settings>
-          XML
-          cat $HOME/.m2/settings.xml
 
 
       - name: Build & Deploy
