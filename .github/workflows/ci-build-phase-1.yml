@@ -110,7 +110,7 @@ jobs:
       
       - name: SonarCloud Scan
         #if: always() # continue even if previous steps fail (like tests)
-        if: ${{ github.event.inputs.skip_sonar != true }}
+        if: ${{ github.event.inputs.skip_sonar != 'true' }}
         continue-on-error: true
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
