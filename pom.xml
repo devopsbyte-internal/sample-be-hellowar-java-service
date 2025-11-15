@@ -63,6 +63,15 @@
 
   <build>
     <finalName>${project.artifactId}-${project.version}</finalName>
+
+    <resources>
+     <resource>
+       <directory>src/main/resources</directory>
+       <filtering>true</filtering>
+     </resource>
+    </resources>
+
+           
     <plugins>
     <!-- Jacoco code coverage plugin -->
       <plugin>
