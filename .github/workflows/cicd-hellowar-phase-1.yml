@@ -1,5 +1,5 @@
 
-name: CI/CD - Maven WAR EC2:Tomcat (Phase-1)
+name: CI/CD - HelloWar (Phase-1)
 run-name: >
   ${{ github.event.inputs.run_description != '' && github.event.inputs.run_description || 'Manual Trigger' }}
 
