@@ -1,5 +1,5 @@
 # Main:
-cd infra-tf-backend
+cd tf
 
 terraform init
 
@@ -20,3 +20,4 @@ curl http://<be_public_ip>:8080/   # will show Tomcat default error until you de
 ssh -i your-key.pem ec2-user@<be_public_ip>
 sudo systemctl status tomcat
 sudo tail -n 50 /var/log/cloud-init-output.log
+
