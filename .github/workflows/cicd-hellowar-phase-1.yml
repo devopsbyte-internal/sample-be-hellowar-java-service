@@ -159,7 +159,24 @@ jobs:
       ARTIFACT_BASE_VERSION: ${{ vars.JFROG_ARTIFACT_BASE_VER }}
       ARTIFACTORY_USER: ${{ secrets.JFROG_USER_CI  }}
       ARTIFACTORY_TOKEN: ${{ secrets.JFROG_TOKEN_CI  }}
+      
     steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          
+      - name: Get EC2 IP dynamically
+        id: get_ip
+        uses: debopsbyte-internal/cicd-actions/.github/actions/get-ec2-ip@v1
+        with:
+          instance-tag: "hellowar-tomcat-be"
+          aws-region: "us-east-1"
+
+      - name: Set EC2 host env
+        run: echo "EC2_HOST=${{ steps.get_ip.outputs.ec2_ip }}" >> $GITHUB_ENV
+        
       - name: Start SSH agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
@@ -167,7 +184,7 @@ jobs:
 
       - name: Run deploy.sh on EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ vars.EC2_USER }}@${{ vars.EC2_HOST }} \
+          ssh -o StrictHostKeyChecking=no ${{ vars.EC2_USER }}@$EC2_HOST \
             "sudo ARTIFACTORY_URL='$ARTIFACTORY_URL' \
                   ARTIFACTORY_REPO='$ARTIFACTORY_REPO' \
                   ARTIFACT_GROUP_PATH='$ARTIFACT_GROUP_PATH' \
