@@ -151,6 +151,14 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    env:
+      ARTIFACTORY_URL: ${{ vars.JFROG_URL }}
+      ARTIFACTORY_REPO: ${{ vars.JFROG_REPO }}
+      ARTIFACT_GROUP_PATH: ${{ vars.JFROG_ARTIFACT_GROUP_PATH }}
+      ARTIFACT_ID: ${{ vars.JFROG_ARTIFACT_ID }}
+      ARTIFACT_BASE_VERSION: ${{ vars.JFROG_ARTIFACT_BASE_VER }}
+      ARTIFACTORY_USER: ${{ secrets.JFROG_USER_CI  }}
+      ARTIFACTORY_TOKEN: ${{ secrets.JFROG_TOKEN_CI  }}
     steps:
       - name: Start SSH agent
         uses: webfactory/ssh-agent@v0.9.0
@@ -160,4 +168,11 @@ jobs:
       - name: Run deploy.sh on EC2
         run: |
           ssh -o StrictHostKeyChecking=no ${{ vars.EC2_USER }}@${{ vars.EC2_HOST }} \
-            "sudo /opt/deploy/deploy.sh '${{ github.event.inputs.deploy_version }}'"
+            "sudo ARTIFACTORY_URL='$ARTIFACTORY_URL' \
+                  ARTIFACTORY_REPO='$ARTIFACTORY_REPO' \
+                  ARTIFACT_GROUP_PATH='$ARTIFACT_GROUP_PATH' \
+                  ARTIFACT_ID='$ARTIFACT_ID' \
+                  ARTIFACT_BASE_VERSION='$ARTIFACT_BASE_VERSION' \
+                  ARTIFACTORY_USER='$ARTIFACTORY_USER' \
+                  ARTIFACTORY_TOKEN='$ARTIFACTORY_TOKEN' \
+                  /opt/deploy/deploy.sh '${{ github.event.inputs.deploy_version }}'"
